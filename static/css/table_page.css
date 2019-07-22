@@ -1,0 +1,134 @@
+/**
+    テーブルスタイルのページ用CSS
+ */
+.treeview .list-group-item {
+    cursor: pointer;
+    text-decoration-line: none;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    border-color: transparent;
+}
+
+.treeview span.indent {
+    margin-left: 10px;
+    margin-right: 10px
+}
+
+.treeview span.icon {
+    width: 12px;
+    margin-right: 5px
+}
+
+.treeview .node-disabled {
+    color: silver;
+    cursor: not-allowed
+}
+
+.treeview .list-group-item .fa-folder {
+    color: gold;
+}
+
+.treeview .list-group-item .fa-user {
+    color: dodgerblue;
+}
+
+/*
+ * datatablesの上下を中央へ, 幅も短く
+ */
+table.dataTable tbody td {
+    vertical-align: middle;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+/* 高さを固定 */
+table.dataTable tbody td {
+    height: 25px;
+}
+
+table.dataTable thead tr th {
+    padding: 5px;
+}
+
+table.dataTable tbody .odd {
+    background-color: #f7f4f4;
+}
+
+table.dataTable {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* dataTables CSS modification & positioning */
+table.dataTable thead .sorting:before,
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_desc:before,
+table.dataTable thead .sorting_asc_disabled:before,
+table.dataTable thead .sorting_desc_disabled:before {
+    right: 0 !important;
+    content: "" !important;
+}
+
+table.dataTable thead .sorting:after,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_asc_disabled:after,
+table.dataTable thead .sorting_desc_disabled:after {
+    right: 0 !important;
+    content: "" !important;
+}
+
+table.dataTable thead th {
+    position: relative;
+    background-image: none !important;
+}
+
+table.dataTable thead th.sorting:after,
+table.dataTable thead th.sorting_asc:after,
+table.dataTable thead th.sorting_desc:after {
+    position: absolute !important;
+    top: 2px !important;
+    right: 8px !important;
+    display: block !important;
+    font-size: 14px !important;
+    font-family: "FontAwesome" !important;
+}
+
+table.dataTable thead th.sorting:after {
+    font-family: "FontAwesome" !important;
+    content: "\f0dc" !important;
+    font-size: 14px !important;
+    padding-top: 0.12em !important;
+}
+
+table.dataTable thead th.sorting_asc:after {
+    top: 2px !important;
+    padding-top: 0.12em !important;
+    font-family: "FontAwesome" !important;
+    font-size: 14px !important;
+    content: "\f0de" !important;
+}
+
+table.dataTable thead th.sorting_desc:after {
+    top: 2px !important;
+    padding-top: 0.12em !important;
+    font-family: "FontAwesome" !important;
+    font-size: 14px !important;
+    content: "\f0dd" !important;
+}
+
+div.dataTables_length {
+    font-size: 90%;
+    padding-top: 5px;
+    padding-bottom: 0;
+}
+
+div.dataTables_wrapper div.dataTables_info {
+    padding-top: 13px;
+    font-size: 90%;
+}
+
+div.dataTables_paginate {
+    font-size: 90%;
+}
+

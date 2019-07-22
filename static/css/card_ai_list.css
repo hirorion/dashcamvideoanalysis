@@ -1,0 +1,41 @@
+/**
+    CARDを使ったページ用CSS
+ */
+div.card {
+    font-size: 90% !important;
+}
+
+div.card-header {
+    background-color: transparent;
+    padding-top: 5px;
+    padding-bottom: 0;
+}
+
+div.card-header input[type="text"] {
+}
+div.card-header select {
+}
+div.card-header label {
+}
+div.card-header .form-group {
+    margin-right: 15px;
+}
+div.card-header input[type="date"] {
+}
+
+
+div.card-body {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+div.card-footer {
+    border-color: transparent;
+    background-color: transparent;
+    padding-top: 5px;
+    padding-bottom: 15px;
+}
+
+form {
+    padding-top: 5px;
+}
