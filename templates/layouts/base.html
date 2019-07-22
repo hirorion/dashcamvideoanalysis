@@ -1,0 +1,68 @@
+{% extends 'bootstrap4/bootstrap4.html' %}
+{% load static from staticfiles %}
+{% load bootstrap4 %}
+{% load myutil %}
+
+{% block bootstrap4_extra_head %}
+    {% block meta-description %}{% endblock %}
+    <meta name="robots" content="noindex,nofollow"><!-- インデックス対応 -->
+
+    <title>IRRICドラレコAI認識:{% block title %}{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'notifIt/css/notifIt.css' %}">
+    <script src="{% static 'js/ajaxutils.js' %}"></script>
+    <script type="text/javascript" src="{% static 'notifIt/js/notifIt.js' %}"></script>
+
+    {% block add_css %}{% endblock %}
+
+    {% block js_script %}{% endblock %}
+
+{% endblock %}
+
+{% block bootstrap4_content %}
+
+    {% block menu %}
+        {% include 'layouts/base_menu.html' %}
+    {% endblock %}
+
+    <div style="margin-bottom: 2px; overflow: hidden;">
+        {% block login_user %}
+            <div style="margin-left: 10px; float: left; font-size: 9px; color: #676767; margin-right: 20px;">{% version_date %}</div>
+            {% if request.user.username %}
+                <div style="float: right; font-size: 9px; color: #676767; margin-right: 20px;">「{{ request.user.username }}さん」ログイン中</div>
+            {% endif %}
+        {% endblock %}
+    </div>
+
+    <div class="main_contents" style="height: 100%;">
+
+        {% block submenu %}{% endblock %}
+
+        <div>
+            {% block login_content %}{% endblock %}
+        </div>
+
+        {% block content %}{% endblock %}
+
+        <div class="footer">
+        </div>
+
+    </div>
+
+    <!--div class="copylight">
+        Copyright &copy; XXX Co., Ltd. All Reights Reserved.
+    </div-->
+
+    <div class="modal fade" data-backdrop="static" id="modal-dialog">
+        <div class="modal-dialog">
+            <div id="dialog_panel"></div>
+        </div>
+    </div>
+
+    <div id="loading" style="display: none;">
+        <img src="{% static 'img/loading.gif' %}" >
+    </div>
+{% endblock %}

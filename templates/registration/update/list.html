@@ -1,0 +1,38 @@
+{% extends "registration/registration_base.html" %}
+{% load bootstrap4 %}
+
+{% block title %}ユーザーリスト{% endblock %}
+
+{% block content %}
+    <div class="col-md-8" style="margin-bottom: 10px;">
+        <h4>ユーザーリスト
+        </h4>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-sm-10">
+        <table class="table">
+            <tr>
+               <th>ユーザーID</th>
+                <th>メールアドレス</th>
+                <th>姓</th>
+                <th>名</th>
+                <th>ログイン最終日</th>
+                <th>権限</th>
+            </tr>
+
+            {% for u in object_list %}
+                <tr>
+                    <td><a href="{% url 'user-update' u.id %}">{{ u.username }}</a></td>
+                    <td>{{ u.email }}</td>
+                    <td>{{ u.last_name }}</td>
+                    <td>{{ u.first_name }}</td>
+                    <td>{{u.last_login}}</td>
+                    <td>{% if u.is_superuser %}管理者{% else %}{% for g in u.groups.all %}{% if g.name == "accounting" %}経理{% else %}一般{% endif %}{% endfor %}{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="clearfix"></div>
+    <a href="/" class="btn btn-default">戻る</a>
+{% endblock %}

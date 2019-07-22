@@ -1,0 +1,26 @@
+{% load render_bundle from webpack_loader %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Example</title>
+</head>
+
+<body>
+{% verbatim %}
+<div id="app">
+    {{ message }}
+</div>
+{% endverbatim %}
+
+{% render_bundle 'main' %}
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue!'
+        }
+    })
+
+</script>
+</body>

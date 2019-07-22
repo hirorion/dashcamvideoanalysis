@@ -1,0 +1,15 @@
+{% extends "registration/registration_base.html" %}
+{% block title %}登録処理は利用できません{% endblock %}
+{% block content %}
+    <div class="row">
+        <div id="registration">
+            <div class="col-md-12">
+                <h4>
+                    申し訳ありません、新規登録は現在受け付けておりません。
+                </h4>
+                <input type='button' class="btn btn-primary" value="ログインページへ戻る" onClick="location.href='{% url 'login' %}'"/>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,60 @@
+{% extends 'user/index_base.html' %}
+{% load static from staticfiles %}
+{% load bootstrap4 %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block add_css %}
+    {# テーブルページの共通CSS #}
+    {% include 'layouts/table_page.css.html' %}
+{% endblock %}
+
+{% block js_script %}
+    {# テーブルページの共通JS #}
+    {% include 'layouts/table_page.js.html' %}
+
+    <script type="text/javascript" charset="UTF-8">
+        <!--//
+
+        $(document).ready(function () {
+
+            //-------------------------------------
+            // イベントセット
+            //-------------------------------------
+        });
+        //-->
+    </script>
+{% endblock %}
+
+{% block category_title %}
+{% endblock %}
+
+{% block content %}
+    {# パンくず作成 #}
+    {% block breadcrumbs %}
+        {% clear_breadcrumbs %}
+        {{ block.super }}
+        {% breadcrumb "契約会社ポータル" "" %}
+        {% breadcrumb "管理機能" "" %}
+        {% breadcrumb "設定" "" %}
+    {% endblock %}
+
+    <div class="container">
+        <div class="row">
+            {# 各ページでセットされたパンくずをレンダリングする #}
+            {% render_breadcrumbs %}
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+            </div>
+
+            <div class="card-body row">
+            </div>
+
+            <div class="card-footer row">
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

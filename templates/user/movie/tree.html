@@ -1,0 +1,22 @@
+<form class="form-inline" id="search_status_form" accept-charset="UTF-8">
+    {% csrf_token %}
+    <input type="hidden" id="search_status" name="search_status" value="">
+</form>
+
+<div class="treeview list-group">
+    <button class="list-group-item list-group-item-action" data-val=0>
+        <span class="fas fa-folder"></span><span class="fas fa-user"></span>（全てのユーザー）
+    </button>
+    <button href="#" class="list-group-item list-group-item-action" data-val=1>
+        <span class="indent"></span>
+        <span class="fas fa-folder"></span><span class="fas fa-user"></span>&nbsp;分析前
+    </button>
+    <button href="#" class="list-group-item list-group-item-action" data-val=2>
+        <span class="indent"></span>
+        <span class="fas fa-folder"></span><span class="fas fa-user"></span>&nbsp;分析中
+    </button>
+    <button href="#" class="list-group-item list-group-item-action" data-val=3>
+        <span class="indent"></span>
+        <span class="fas fa-folder"></span><span class="fas fa-user"></span>&nbsp;分析完了
+    </button>
+</div>

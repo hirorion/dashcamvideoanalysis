@@ -1,0 +1,14 @@
+<form class="form-inline" id="search_user_form" accept-charset="UTF-8">
+    {% csrf_token %}
+    <input type="hidden" id="search_user_group" name="search_user_group" value="">
+</form>
+
+<div class="treeview list-group">
+    <button class="list-group-item list-group-item-action" data-val=0>
+        <span class="fas fa-folder"></span><span class="fas fa-user"></span>（全てのユーザー）
+    </button>
+    <button href="#" class="list-group-item list-group-item-action" data-val=1>
+        <span class="indent"></span>
+        <span class="fas fa-folder"></span><span class="fas fa-user"></span>&nbsp;ドライバー
+    </button>
+</div>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.4.3/plyr.css" />
+  <style>
+    .video-content {
+      width: 1000px;
+      margin: 20px auto;
+    }
+    .video-content video {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="video-content">
+    <video id="player" playsinline="playsinline" poster="/static/img/waiting.jpg"></video>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/0.10.1/hls.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.4.3/plyr.min.js"></script>
+  <script>
+      const video = document.querySelector('#player');
+      const videoSrc = '/static/video/video/video.m3u8';
+      const hlsCheck = Hls.isSupported();
+      const player = new Plyr(video);
+      if (hlsCheck) {
+        var hls = new Hls();
+        hls.loadSource(videoSrc);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, function () { });
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = videoSrc;
+        video.addEventListener('loadedmetadata', function () { });
+      }
+  </script>
+</body>
+</html>

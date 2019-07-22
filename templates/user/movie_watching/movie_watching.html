@@ -1,0 +1,773 @@
+{% extends 'user/index_base.html' %}
+{% load static from staticfiles %}
+{% load bootstrap4 %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block add_css %}
+    {# CARDページの共通CSS #}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/card_page.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'tree-view/simTree.css' %}">
+
+    <style>
+        .card {
+            border: 0;
+        }
+        .card-footer {
+            margin-top: 10px;
+        }
+
+        .sim-tree {
+            padding-top: 10px;
+            padding-left: 5px;
+            padding-right: 10px;
+        }
+
+        .sim-tree a {
+            font-size: 12px;
+        }
+    </style>
+
+{% endblock %}
+
+{% block js_script %}
+    {# 未使用 テーブルページの共通JS #}
+    {#% include 'layouts/table_page.js.html' %#}
+
+    <script type="text/javascript" charset="UTF-8" src="{% static 'tree-view/simTree.js' %}"></script>
+
+    <script type="text/javascript" charset="UTF-8">
+        <!--//
+        var tree;
+        var original_video, labeled_video;
+
+        // 不安全運転パラメータ
+        var analysis_list;
+
+        function set_init_tree() {
+            analysis_list = [
+                {
+                    "id": "1",
+                    "pid": '',
+                    "name": "（全ての不安全運転）",
+                    "open": true
+                },
+                {% comment %}
+                // inter-preview
+                {
+                    "id": '10',
+                    "pid": '1', // parent ID
+                    "name": "信号",
+                    "open": true
+                },
+                {
+                    "id": '100',
+                    "pid": '10',
+                    "name": "赤信号無視",
+                    "open": true
+                },
+                {
+                    "id": '101',
+                    "pid": '10',
+                    "name": "停止できるタイミングの黄信号通過",
+                    "open": true
+                },
+                {
+                    "id": '20',
+                    "pid": '1',
+                    "name": "一時停止",
+                    "open": true
+                },
+                {
+                    "id": '200',
+                    "pid": '20',
+                    "name": "一時停止線手前での不停止",
+                    "open": true
+                },
+                {
+                    "id": '201',
+                    "pid": '20',
+                    "name": "歩行者等がいる横断歩道手前での不停止",
+                    "open": true
+                },
+                {
+                    "id": '202',
+                    "pid": '20',
+                    "name": "踏切進入前の不停止",
+                    "open": true
+                },
+                {
+                    "id": '203',
+                    "pid": '20',
+                    "name": "歩道を横切って駐車場等に進入する際の手前での不停止",
+                    "open": true
+                },
+                {
+                    "id": '30',
+                    "pid": '1',
+                    "name": "速度",
+                    "open": true
+                },
+                {
+                    "id": '300',
+                    "pid": '30',
+                    "name": "速度超過",
+                    "open": true
+                },
+                {
+                    "id": '301',
+                    "pid": '30',
+                    "name": "狭路での高速度運転",
+                    "open": true
+                },
+                {
+                    "id": '302',
+                    "pid": '30',
+                    "name": "歩行者/自転車の側方通過時の速度",
+                    "open": true
+                },
+                {
+                    "id": '40',
+                    "pid": '1',
+                    "name": "その他",
+                    "open": true
+                },
+                {
+                    "id": '400',
+                    "pid": '40',
+                    "name": "人通りが多い場所での減速不足",
+                    "open": true
+                },
+                {
+                    "id": '401',
+                    "pid": '40',
+                    "name": "駐停車禁止場所での駐車",
+                    "open": true
+                },
+                {
+                    "id": '402',
+                    "pid": '40',
+                    "name": "駐車禁止場所での駐車",
+                    "open": true
+                },
+                {
+                    "id": '403',
+                    "pid": '40',
+                    "name": "追い越し禁止区間での追い越し",
+                    "open": true
+                },
+                {
+                    "id": '404',
+                    "pid": '40',
+                    "name": "逆送",
+                    "open": true
+                },
+                {
+                    "id": '405',
+                    "pid": '40',
+                    "name": "通行区分違反",
+                    "open": true
+                },
+                {
+                    "id": '50',
+                    "pid": '1',
+                    "name": "急加減速",
+                    "open": true
+                },
+                {
+                    "id": '500',
+                    "pid": '50',
+                    "name": "信号手前での急加速",
+                    "open": true
+                },
+                {
+                    "id": '501',
+                    "pid": '50',
+                    "name": "右左折直前での急減速",
+                    "open": true
+                },
+                {
+                    "id": '502',
+                    "pid": '50',
+                    "name": "右左折直後の急加速",
+                    "open": true
+                },
+                {
+                    "id": '60',
+                    "pid": '1',
+                    "name": "急ハンドル",
+                    "open": true
+                },
+                {
+                    "id": '600',
+                    "pid": '60',
+                    "name": "交差点右左折時の急ハンドル",
+                    "open": true
+                },
+                {
+                    "id": '601',
+                    "pid": '60',
+                    "name": "駐車場構内進入時の急ハンドル",
+                    "open": true
+                },
+                {
+                    "id": '70',
+                    "pid": '1',
+                    "name": "運転のくせ",
+                    "open": true
+                },
+                {
+                    "id": '700',
+                    "pid": '70',
+                    "name": "詰まった車間距離",
+                    "open": true
+                },
+                {
+                    "id": '701',
+                    "pid": '70',
+                    "name": "速度超過傾向",
+                    "open": true
+                },
+                {
+                    "id": '702',
+                    "pid": '70',
+                    "name": "前が詰まっている交差点への強引な進入",
+                    "open": true
+                },
+                {
+                    "id": '703',
+                    "pid": '70',
+                    "name": "信号が青に変わる前の見切り発進",
+                    "open": true
+                },
+                {
+                    "id": '704',
+                    "pid": '70',
+                    "name": "対向車が通過し終わらないうちの右折発進",
+                    "open": true
+                },
+                {
+                    "id": '705',
+                    "pid": '70',
+                    "name": "車線はみだし",
+                    "open": true
+                },
+                {
+                    "id": '706',
+                    "pid": '70',
+                    "name": "ふらつき走行",
+                    "open": true
+                },
+                {
+                    "id": '707',
+                    "pid": '70',
+                    "name": "交差点回避のための、駐車場等のショートカット通行",
+                    "open": true
+                },
+                {
+                    "id": '708',
+                    "pid": '70',
+                    "name": "前車が発進後の発進手間取り",
+                    "open": true
+                },
+                {
+                    "id": '709',
+                    "pid": '70',
+                    "name": "前進停止から後退までの切り替え時間が極端に短いとき",
+                    "open": true
+                }
+                {% endcomment %}
+            ];
+        }
+
+        $(document).ready(function () {
+            //-------------------------------------
+            // make tree
+            //-------------------------------------
+            tree = simTree({
+                el: '#tree',
+                linkParent: true,
+                check: true,
+                data: function (obj, callback) {
+                    {% comment %}
+                    // inter-preview
+                    set_init_tree();
+                    {% endcomment %}
+                    $.get('/api/movie/get/analysis/{{ movie.id }}/', function (ret) {
+                        console.log(ret);
+                        set_init_tree();
+                        if (ret["results"].length === 0) {
+                            console.log("result return");
+                            return;
+                        }
+                        var data = ret['results'][0]['data'];
+                        var new_data = [];
+                        for (var i = 0; i < data.length; i++) {
+                            var grp_name = data[i]['group'];
+                            var cate_name = data[i]['category'];
+                            var violations = data[i]['violations'];
+                            if (violations.length === 0) {
+                                continue;
+                            }
+                            if (new_data.indexOf(grp_name) === -1) {
+                                new_data[grp_name] = []
+                            }
+                            carr = {"name": cate_name, "data": violations};
+                            new_data[grp_name].push(carr)
+                        }
+                        if (Object.keys(new_data).length === 0) {
+                            console.log("new_data return");
+                            return;
+                        }
+                        var c = 1;
+                        for (var grp_key in new_data) {
+                            var g_item = {
+                                "id": c * 10,
+                                "pid": 1, // parent ID
+                                "name": grp_key,
+                                "open": true
+                            };
+                            analysis_list.push(g_item);
+                            c++;
+                            for (var i = 0; i < new_data[grp_key].length; i++) {
+                                var c_item = {
+                                    "id": (100 * c) + i,
+                                    "pid": g_item['id'], // parent ID
+                                    "name": new_data[grp_key][i]["name"],
+                                    "open": true
+                                };
+                                analysis_list.push(c_item);
+                                for (j = 0; j < new_data[grp_key][i]["data"].length; j++) {
+                                    var s = new_data[grp_key][i]["data"][j]["start_fno"] / 27.0;
+                                    var e = new_data[grp_key][i]["data"][j]["last_fno"] / 27.0;
+                                    var d = new Date("{{ creation_date }}"); //.toLocaleString('ja-JP');
+                                    d.setSeconds(d.getSeconds() + s);
+                                    var d_item = {
+                                        "id": c_item['id'] + (j + 1),
+                                        "pid": c_item['id'], // parent ID
+                                        "name": d.toLocaleString('ja-JP'),
+                                        "open": true,
+                                        "data": [{"s": s, "e": e}]
+                                    };
+                                    analysis_list.push(d_item);
+                                }
+                            }
+                        }
+                        //console.log(analysis_list);
+                        callback(analysis_list);
+                    });
+                    {% comment %}
+                    // inter-preview
+                    callback(analysis_list);
+                    {% endcomment %}
+                },
+                //data: analysis_list,
+                onClick: function (item) {
+                    //console.log(item)
+                },
+                onChange: function (item) {
+                    //console.log(item)
+                }
+            });
+
+            original_video = document.getElementById('original_video');
+            labeled_video = document.getElementById('labeled_video');
+
+            // 作成中の場合は、タイマーを動かす
+            {% if disabled %}
+                // プログレスバーを生成
+                $("#progressbar").css("width", "0");
+                // polling start
+                timerStart({{ movie.id }});
+                notif({
+                    msg: "分析中です。しばらくお待ちください。",
+                    type: "info",
+                    position: "center",
+                    autohide: false
+                });
+
+            {% endif %}
+        });
+
+
+        var callback_original_id;
+        var callback_labeled_id;
+        var original_time_tables;
+        var labeled_time_tables;
+        var original_cur_no = 0;
+        var labeled_cur_no = 0;
+
+        function play_original_video() {
+            var selected = tree.getSelected();
+            if (selected.length === 0) {
+                alert("不安全運転の項目を選択しください。");
+                return;
+            }
+
+            original_time_tables = [];
+            for (var i = 0; i < selected.length; i++) {
+                if (selected[i]["data"] !== undefined && selected[i]["data"] !== "") {
+                    original_time_tables = original_time_tables.concat(selected[i]["data"]);
+                }
+            }
+
+            original_video.currentTime = original_time_tables[original_cur_no]["s"];
+            original_video.play();
+            callback_original_id = requestAnimationFrame(check_play_original_video) ;
+        }
+
+        function check_play_original_video() {
+            if (original_video.currentTime >= original_time_tables[original_cur_no]["e"]) {
+                original_video.pause();
+                original_cur_no++;
+                if (original_cur_no >= original_time_tables.length) {
+                    cancelAnimationFrame(callback_original_id);
+                    original_cur_no = 0;
+                    return;
+                }
+                // 0.5秒の間隔を開ける
+                setTimeout(
+                    function () {
+                        original_video.currentTime = original_time_tables[original_cur_no]["s"];
+                        original_video.play();
+                    },
+                    500
+                );
+            }
+            // 再帰的に実行する
+            callback_original_id = requestAnimationFrame(check_play_original_video);
+        }
+
+        function play_labeled_video() {
+            var selected = tree.getSelected();
+            if (selected.length === 0) {
+                alert("不安全運転の項目を選択しください。");
+                return;
+            }
+
+            labeled_time_tables = [];
+            for (var i = 0; i < selected.length; i++) {
+                if (selected[i]["data"] !== undefined && selected[i]["data"] !== "") {
+                    labeled_time_tables = labeled_time_tables.concat(selected[i]["data"]);
+                }
+            }
+
+            labeled_video.currentTime = labeled_time_tables[labeled_cur_no]["s"];
+            labeled_video.play();
+            callback_labeled_id = requestAnimationFrame(check_play_labeled_video) ;
+        }
+
+        function check_play_labeled_video() {
+            if (labeled_video.currentTime >= labeled_time_tables[labeled_cur_no]["e"]) {
+                labeled_video.pause();
+                labeled_cur_no++;
+                if (labeled_cur_no >= labeled_time_tables.length) {
+                    cancelAnimationFrame(callback_labeled_id);
+                    labeled_cur_no = 0;
+                    return;
+                }
+                // 0.5秒の間隔を開ける
+                setTimeout(
+                    function () {
+                        labeled_video.currentTime = labeled_time_tables[labeled_cur_no]["s"];
+                        labeled_video.play();
+                    },
+                    500
+                );
+            }
+            // 再帰的に実行する
+            callback_labeled_id = requestAnimationFrame(check_play_labeled_video);
+        }
+
+        /**
+         * 解析（テンポラリ)
+         */
+        function analysis_submit(id) {
+            if (!confirm('この動画の解析をしてもいいですか？')) {
+                return false;
+            }
+
+            $('#labeled_video').each(function(num,val){
+                $(this).attr('src', '')
+            });
+            var vids = $("#labeled_video");
+            $.each(vids, function(){
+                this.controls = false;
+            });
+            $("#labeled_video_div").addClass('labeled_video_back');
+            $('#labeled_play_btn').prop("disabled", true);
+
+            var data = "csrfmiddlewaretoken=" + $("input[name='csrfmiddlewaretoken']").val();
+            $.ajax({
+                url: '{% url 'user_movie_submit_job_url' %}' + id + "/",
+                type: 'POST',
+                cache: false,
+                data: data,
+                dataType: "json",
+                success: function (json) {
+                    if (json.result === "OK") {
+                        timerStart(id);
+                        notif({
+                            msg: "分析を開始しました。しばらくお待ちください。",
+                            type: "info",
+                            position: "center",
+                            autohide: false
+                        });
+                    } else if (json.result === "PROCESSING") {
+                        notif({
+                            msg: "分析中です。しばらくお待ちください。",
+                            type: "warning",
+                            position: "center",
+                            autohide: false
+                        });
+                    } else {
+                        notif({
+                            msg: "分析に失敗しました。",
+                            type: "error",
+                            position: "center",
+                        });
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("Failed to read content.");
+                }
+            });
+            return false;
+        }
+
+        /**
+        * dialog表示/非表示
+        */
+        function show_analy_dialog() {
+           $("#analysis_dialog").modal("show");
+        }
+        function hide_analy_dialog() {
+           $("#analysis_dialog").modal("hide");
+        }
+
+        var compileTimer;
+        function timerStart(movie_id) {
+            // 既存のタイマーがあれば停止
+            clearTimeout(compileTimer);
+
+            var data = "csrfmiddlewaretoken=" + $("input[name='csrfmiddlewaretoken']").val();
+            var callAjax = function () {
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url 'user_movie_get_job_status_url' %}' + movie_id + "/",
+                    cache: false,
+                    data: data,
+                    dataType: 'json',
+                    success: function (json) {
+                        // 指定idの行を更新
+                        console.log(json);
+                        for (key in json) {
+                            console.log("status = " + json[key].status);
+                            if (json[key].status === 1) {
+                                //$('#button_sr').prop("disabled", false);
+                                $('#progressbar').css("width", json[key].progress);
+                                $('#progressbar').text(json[key].progress + "%");
+
+                                continue;
+
+                            } else if (json[key].status < 0) {
+                                notif({
+                                    msg: "分析に失敗しました。",
+                                    type: "error",
+                                    position: "center"
+                                });
+                            } else if (json[key].status === 3) {
+                                notif({
+                                    msg: "分析を中止しました。",
+                                    type: "warning",
+                                    position: "center"
+                                });
+                            } else {
+                                notif({
+                                    msg: "分析が終わりました。",
+                                    type: "success",
+                                    position: "center"
+                                });
+                                // ツリー表示
+                                set_init_tree();
+                                tree.refresh();
+                                // アノテーションビデオを表示
+                                $('#labeled_video').each(function(num,val){
+                                    $(this).attr('src', '{{ labeled_url|safe }}')
+                                });
+                                var vids = $("#labeled_video");
+                                $.each(vids, function(){
+                                    this.controls = true;
+                                });
+                                $("#labeled_video_div").removeClass('labeled_video_back');
+                            }
+                            $('#labeled_play_btn').prop("disabled", false);
+                            $('#progressbar').css("width", 0);
+                            $('#progressbar').text("0%");
+                            // データはひとつしか使わないのでここに帰る
+                            clearTimeout(compileTimer);
+                            return;
+                        }
+                        // 次のタイマーをセット。3秒後
+                        compileTimer = setTimeout(callAjax, 2000);
+                    },
+                    error: function () {
+                        console.log("Ajax read failed.");
+                        clearTimeout(compileTimer);
+                    }
+                });
+            }; // callAjax
+
+            /**
+             * タイマーで1500ミリ秒毎にAjax通信を行い、状況APIにアクセスする
+             */
+            compileTimer = setTimeout(callAjax, 300);
+        }
+
+        //-->
+    </script>
+{% endblock %}
+
+{% block category_title %}
+{% endblock %}
+
+{% block content %}
+    {# パンくず作成 #}
+    {% block breadcrumbs %}
+        {% clear_breadcrumbs %}
+        {{ block.super }}
+        {% breadcrumb "契約会社ポータル" "" %}
+        {% breadcrumb "管理機能" "" %}
+        {% breadcrumb "動画管理" "" %}
+        {% breadcrumb "分析動画表示" "" %}
+    {% endblock %}
+
+    <div class="container">
+        <div class="row">
+            {# 各ページでセットされたパンくずをレンダリングする #}
+            {% render_breadcrumbs %}
+        </div>
+
+        <div class="card">
+            <!--div class="card-header">
+            </div-->
+
+            <div class="card-body row">
+                <div class="col-2-auto border">
+                    {% include 'user/movie_watching/tree.html' %}
+                </div>
+
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header" style="background: #eee;">オリジナル動画 (ファイル名:{{ movie.filename }} 運転日:{{ creation_date_disp }})</div>
+                                <div class="card-body">
+                                    <video class="video" id="original_video" controls style="width: 100%;" title="{{ movie.unique_filename }}">
+                                        <!--source src="{% static org_url %}"-->
+                                        <source src="{{ org_url|safe }}">
+                                        <p>動画を再生するには、videoタグをサポートしたブラウザが必要です。</p>
+                                    </video>
+                                </div>
+                            </div>
+                        <!--/div>
+                        <div class="col"-->
+
+                            <div class="form-row" style="margin-top: 10px;">
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" name="continuous_play" id="continuous_play_chk">
+                                            <label class="form-check-label" for="continuous_play_chk" style="font-size: 14px;">
+                                                選択箇所を連続再生
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" name="loop_play" id="loop_play_chk">
+                                            <label class="form-check-label" for="loop_play_chk" style="font-size: 14px;">
+                                                指定箇所をループ再生
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <button type="button" id="original_play_btn" class="btn btn-sm btn-dark" onclick="return play_original_video();"><i class="fa fa-play"></i> オリジナル動画再生</button>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header" style="background: #eee;">ラベル付き動画</div>
+                                <div class="card-body {% if not labeled_video_enable %}labeled_video_back{% endif %}" id="labeled_video_div">
+                                    <video class="video" id="labeled_video" style="width: 100%;" title="{{ movie.unique_filename }}" {% if labeled_video_enable %}controls{% endif %}>
+                                        {% if labeled_video_enable %}
+                                            <source src="{{ labeled_url|safe }}">
+                                        {% else %}
+                                            <source src="">
+                                        {% endif %}
+                                        <p>動画を再生するには、videoタグをサポートしたブラウザが必要です。</p>
+                                    </video>
+                                </div>
+                            </div>
+
+                            <div class="form-row" style="margin-top: 10px;">
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" name="continuous_play" id="continuous_play_chk">
+                                            <label class="form-check-label" for="continuous_play_chk" style="font-size: 14px;">
+                                                選択箇所を連続再生
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" name="loop_play" id="loop_play_chk">
+                                            <label class="form-check-label" for="loop_play_chk" style="font-size: 14px;">
+                                                指定箇所をループ再生
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <button {% if not labeled_video_enable %}disabled{% endif %}  type="button" id="labeled_play_btn" class="btn btn-sm btn-dark" onclick="return play_labeled_video();"><i class="fa fa-play"></i> ラベル付き動画再生</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer row align-items-center">
+                <div class="col-3">
+                </div>
+                <div class="col-auto">
+                    <button type="button" id="analysis_btn" class="btn btn-sm btn-dark" onclick="return analysis_submit('{{ movie.id }}');">分析</button>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-sm btn-dark" onclick="return false;">結果</button>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-sm btn-dark" onclick="return false;">分析結果詳細</button>
+                </div>
+                <div class="col-4">
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-sm btn-dark" onclick="return false;">削除</button>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-sm btn-dark" onclick="location.href='{% url 'user_movie' %}';">戻る</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- modal -->
+    <div class="modal" id="analysis_dialog" data-backdrop="static" data-keyboard="false" role="dialog">
+        <div class="modal-dialog modal-ssm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img src="{% static 'img/loading2.gif' %}">&nbsp;&nbsp;分析中...
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

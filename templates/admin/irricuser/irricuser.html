@@ -1,0 +1,240 @@
+{% extends 'admin/index_base.html' %}
+{% load static from staticfiles %}
+{% load bootstrap4 %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block add_css %}
+    {# テーブルページの共通CSS #}
+    {% include 'layouts/table_page.css.html' %}
+{% endblock %}
+
+{% block js_script %}
+    {# テーブルページの共通JS #}
+    {% include 'layouts/table_page.js.html' %}
+
+    <script type="text/javascript" charset="UTF-8">
+        <!--//
+        var table;
+
+        $(document).ready(function () {
+            //-------------------------------------
+            // load list
+            //-------------------------------------
+            table = $('#list-table').DataTable({
+                scrollX: false,
+                stateSave: true,
+                serverSide: true,
+                "dom": "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-4'i><'col-sm-12 col-md-6'p>>",
+                rowId: 'dataId',
+                // page related
+                "order": [[1, "desc"]],
+                // page related
+                "columns": [
+                    { "data": "checkbox_contents", "searchable": false, orderable: false },
+                    { "data": "username", "searchable": false },
+                    { "data": "status", orderable: false },
+                    { "data": "group" },
+                    { "data": "name" },
+                    { "data": "count_contract_company" },
+                    { "data": "consultation_status", orderable: false},
+                    { "data": "report_status", orderable: false },
+                    { "data": "last_login" },
+                ],
+                ajax: {
+                    // page related
+                    "url": "{% url "admin_irricuser_list" %}",
+                    "type": "POST",
+                    "data": function (d) {
+                        return table_condition(d);
+                    }
+                }
+            });
+
+            //-------------------------------------
+            // イベントセット
+            //-------------------------------------
+
+            // 更新リンクイベント
+            $('#list-table tbody').on('click', '.mylink-user-update', function () {
+                var id = table.row( $(this).parents('tr') ).id().replace("row_", "");
+                location.href="{% url 'admin_irricuser_update_url' %}" + id + "/";
+                return false;
+            });
+
+            /**
+             * 検索フォームのイベントセット
+             */
+            // page related
+            $('#search_form').submit(function (e) {
+                // 左ツリーの検索条件をクリアする（これしないとこちらが優先になる）
+                $('#search_user_group').val('');
+                // テーブル再読込
+                table.ajax.reload();
+                return false;
+            });
+
+            /**
+             * 左ツリーからの検索ボタンのイベントセット
+             * data-valの値をチェックして検索実行
+            */
+            // page related
+            $('.treeview').on('click', '.list-group-item', function () {
+                var no = $(this).data('val');
+                $('#search_user_group').val(no);
+                table.ajax.reload();
+                // 検索フォームリセット
+                document.search_form.reset();
+                return false;
+            });
+
+        });
+
+        //-------------------------------------
+        // テーブルリストの取得条件を切り替える
+        //-------------------------------------
+        // page related
+        function table_condition(d) {
+            if ($('#search_user_group').val() !== '') {
+                return $('#search_user_form').serializeFormJSON(d);
+            } else {
+                return $('#search_form').serializeFormJSON(d);
+            }
+        }
+
+        /**
+         * アカウント操作アクション
+         */
+        // page related
+        function action_account(cmd) {
+            var arr = [];
+            $('#list-table tbody td input').each(function(i, elem) {
+                if ($(this).prop('checked')) {
+                    arr.push("selected=" + $(this).val());
+                }
+            });
+
+            if (arr.length === 0) {
+                alert("選択してください。");
+                return false;
+            }
+
+            if (cmd === "inactive") {
+                if (!confirm('利用停止にしてもいいですか？')) {
+                    return false;
+                }
+            } else if (cmd === "active") {
+                if (!confirm('利用再開してもいいですか？')) {
+                    return false;
+                }
+            } else if (cmd === "delete") {
+                if (!confirm('削除してもいいですか？')) {
+                    return false;
+                }
+            }
+
+            var data = arr.join('&');
+            data += "&csrfmiddlewaretoken=" + $("input[name='csrfmiddlewaretoken']").val();
+            data += "&cmd=" + cmd;
+            $.ajax({
+                url: '{% url 'admin_irricuser_ctrl' %}',
+                type: 'POST',
+                cache: false,
+                data: data,
+                dataType: "json",
+                success: function (json) {
+                    if (json.result === 1) {
+                        if (cmd === "inactive") {
+                            if (!confirm('利用停止にしました。')) {
+                                return false;
+                            }
+                        } else if (cmd === "active") {
+                            if (!confirm('利用再開にしました。')) {
+                                return false;
+                            }
+                        } else if (cmd === "delete") {
+                            if (!confirm('削除しました。')) {
+                                return false;
+                            }
+                        }
+                    }
+                    table.ajax.reload();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("Failed to read content.");
+                }
+            });
+
+            return false;
+        }
+
+        //-->
+    </script>
+{% endblock %}
+
+{% block category_title %}
+{% endblock %}
+
+{% block content %}
+    {# パンくず作成 #}
+    {% block breadcrumbs %}
+        {% clear_breadcrumbs %}
+        {{ block.super }}
+        {% breadcrumb "IRRICドラレコAI認識" "" %}
+        {% breadcrumb "管理機能" "" %}
+        {% breadcrumb "IRRICユーザー管理" "" %}
+    {% endblock %}
+
+    <div class="container">
+        <div class="row">
+            {# 各ページでセットされたパンくずをレンダリングする #}
+            {% render_breadcrumbs %}
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <form class="form-inline" name="search_form" id="search_form" accept-charset="UTF-8">
+                    {% csrf_token %}
+                    <div class="form-group mb-2">
+                        <label for="id_login_id">ログインID</label>
+                        <input type="text" name="search_login_id" class="form-control use_icon" placeholder="&#xf002; ログインID" id="id_login_id">
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="id_name">氏名</label>
+                        <input type="text" name="search_name" class="form-control use_icon" placeholder="&#xf002; 氏名" id="id_name">
+                    </div>
+
+                    <div class="form-group mb-2">{# TODO 対面コンサル未実施有は未実装 #}
+                        <label for="id_consultation_incomplete">対面コンサル未実施有</label>
+                        <input type="checkbox" name="consultation_incomplete" class="form-control check" id="id_consultation_incomplete">
+                    </div>
+                    <div class="form-group mb-2">{# TODO 診断レポート未提出有は未実装 #}
+                        <label for="id_report_incomplete">診断レポート未提出有</label>
+                        <input type="checkbox" name="report_incomplete" class="form-control check" id="id_report_incomplete">
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-dark mb-2">検索</button>
+                </form>
+            </div>
+
+            <div class="card-body row">
+                <div class="col-2-auto border">
+                    {% include 'admin/irricuser/tree.html' %}
+                </div>
+
+                <div class="col">
+                    {% include 'admin/irricuser/table.html' %}
+                </div>
+            </div>
+
+            <div class="card-footer row">
+                <div class="col-auto"><button type="button" class="btn btn-sm btn-dark" onclick="location.href='{% url 'admin_irricuser_new' %}'">新規登録</button></div>
+                <div class="col-auto"><button type="button" class="btn btn-sm btn-dark" onclick="">ログインID一括登録</button></div>
+                <div class="col text-right"><button type="button" class="btn btn-sm btn-dark" onclick="return action_account('inactive');">利用停止</button></div>
+                <div class="col-auto"><button type="button" class="btn btn-sm btn-dark" onclick="return action_account('active');">利用再開</button></div>
+                <div class="col-auto"><button type="button" class="btn btn-sm btn-dark" onclick="return action_account('delete');">&nbsp;削除&nbsp;</button></div>
+
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

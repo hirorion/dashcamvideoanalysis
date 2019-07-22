@@ -1,0 +1,37 @@
+{% load myutil %}
+{% load static from staticfiles %}
+
+<div style="float: left;">
+    <select class="form-control input-sm" name="{{ n1 }}" id="year">
+        {% if use_none or use_none == None %}
+            <option value="">-</option>
+        {% endif %}
+        {% for c in 2000|range:"2031,1" %}
+            <option value="{{c}}" {% if dateval|date:"Y" == c|slugify %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+    </select>/
+    <select class="form-control input-sm" name="{{ n2 }}" id="month">
+        {% if use_none or use_none == None %}
+            <option value="">-</option>
+        {% endif %}
+        {% for c in 1|range:"13,1" %}
+            <option value="{{ c }}" {% if dateval|date:"n" == c|slugify %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+    </select>/
+    <select class="form-control input-sm" name="{{ n3 }}" id="day">
+        {% if use_none or use_none == None %}
+            <option value="">-</option>
+        {% endif %}
+        {% for c in 1|range:"32,1" %}
+            <option value="{{ c }}" {% if dateval|date:"j" == c|slugify %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+    </select>
+
+    <div class='input-group date {{ datepicker_class_name }}'>
+        <input type='text' class="form-control input-sm" style="display: none;"/>
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+        </span>
+    </div>
+    {{ add_mes|default:'' }}
+</div>

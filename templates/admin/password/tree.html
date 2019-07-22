@@ -1,0 +1,22 @@
+<form class="form-inline" id="search_user_form" accept-charset="UTF-8">
+    {% csrf_token %}
+    <input type="hidden" id="search_user_group" name="search_user_group" value="">
+</form>
+
+<div class="treeview list-group">
+    <button class="list-group-item list-group-item-action" data-val=0>
+        <span class="fas fa-folder"></span><span class="fas fa-user"></span>（全てのユーザー）
+    </button>
+    <button href="#" class="list-group-item list-group-item-action" data-val=2>
+        <span class="indent"></span>
+        <span class="fas fa-folder"></span><span class="fas fa-user"></span>&nbsp;IRRICシステム管理者
+    </button>
+    <button href="#" class="list-group-item list-group-item-action" data-val=3>
+        <span class="indent"></span>
+        <span class="fas fa-folder"></span><span class="fas fa-user"></span>&nbsp;IRRICコンサル担当
+    </button>
+    <button href="#" class="list-group-item list-group-item-action" data-val=4>
+        <span class="indent"></span>
+        <span class="fas fa-folder"></span><span class="fas fa-user"></span>&nbsp;契約会社
+    </button>
+</div>

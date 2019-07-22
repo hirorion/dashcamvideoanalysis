@@ -1,0 +1,15 @@
+{% load i18n %}
+{% url 'registration_activate' activation_key as activation_key_url %}
+
+<body>
+<h3>IRRICドラレコAI認識のユーザー登録案内</h3>
+<p>
+IRRICドラレコAI認識のユーザー登録のご案内です。
+もし、見覚えのない場合は、このメールを無視してください。
+この記録から削除されます。
+</p>
+<p>
+このアカウントを有効にするには、<b>{{ expiration_days }}</b>日以内に次のリンクをクリックしてください：<br/>
+<a href="http{% if request.is_secure %}s{% endif %}://{{ site.domain }}{{ activation_key_url }}">アカウントを有効にする</a>
+</p>
+</body>

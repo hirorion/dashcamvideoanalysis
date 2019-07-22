@@ -1,0 +1,121 @@
+{% extends 'user/index_base.html' %}
+{% load static from staticfiles %}
+
+{% block add_css %}
+    {# テーブルページの共通CSS #}
+    {% include 'layouts/table_page.css.html' %}
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/rowgroup/1.1.0/css/rowGroup.bootstrap4.min.css">
+{% endblock %}
+
+{% block js_script %}
+    {# テーブルページの共通JS #}
+    {% include 'layouts/table_page.js.html' %}
+
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/rowgroup/1.1.0/js/dataTables.rowGroup.min.js"></script>
+
+    <script type="text/javascript" charset="UTF-8">
+        <!--//
+        var table;
+
+        $(document).ready(function () {
+            //-------------------------------------
+            // load list
+            //-------------------------------------
+            table = $('#list-table').DataTable({
+                scrollX: false,
+                stateSave: true,
+                serverSide: true,
+                "dom": "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-4'i><'col-sm-12 col-md-6'p>>",
+                rowId: 'dataId',
+                // page related
+                //"order": [[1, "desc"]],
+                // page related
+                "columns": [
+                    { "data": "tag" },
+                    { "data": "score" },
+                    { "data": "data" },
+                ],
+                rowGroup: {
+                    dataSrc: ['movie_id', 'fno'],
+                    startRender: function (rows, group, level) {
+                        if (level === 0) {
+                            return $('<tr/>')
+                                .append('<td colspan="2">動画番号 ' + group + '</td>')
+                        } else if (level === 1) {
+                            return $('<tr/>')
+                                .append('<td>フレームNo. ' + group + '</td>')
+                                .append('<td><img src="{% url 'ai_movie_get_image_url' %}' + rows.data()[0]['movie_id'] + '/' + rows.data()[0]['fno'] + '/"></td>')
+                        }
+                    },
+                    //endRender: function (rows, group, level) {
+                    //    return $('<tr/>')
+                    //            .append('<td class="text-center">オブジェクト名</td>')
+                    //            .append('<td class="text-center">Score</td>')
+                    //}
+                },
+                ajax: {
+                    // page related
+                    "url": "{% url "ai_movie_list" %}",
+                    "type": "POST",
+                    "data": function (d) {
+                        return table_condition(d);
+                    }
+                }
+            });
+
+            //-------------------------------------
+            // イベントセット
+            //-------------------------------------
+        });
+
+        //-------------------------------------
+        // テーブルリストの取得条件を切り替える
+        //-------------------------------------
+        // page related
+        function table_condition(d) {
+            return $('#search_form').serializeFormJSON(d);
+        }
+        //-->
+    </script>
+{% endblock %}
+
+{% block category_title %}
+{% endblock %}
+
+{% block content %}
+    <div class="container" style="height: 100%;">
+        <div class="card">
+            <div class="card-header" style="padding-bottom: 5px;">
+                <form id="search_form" accept-charset="UTF-8" onsubmit="table.ajax.reload(); return false;">
+                    {% csrf_token %}
+                    <div class="form-group-sm">
+                        <div class="form-inline">
+                            {% with ''|center:3 as range %}
+                            {% for _ in range %}
+                            <select name="object[]" class="form-control form-control-sm">
+                                <option value="">選択してください</option>
+                                {% for obj in OBJECTS %}
+                                <option value="{{ obj.tag }}">{{ obj.tag }}</option>
+                                {% endfor %}
+                            </select>
+                            {% endfor %}
+                            {% endwith %}
+                        </div>
+                        <textarea class="form-control" name="search_frame_sql">{{ FRAME_SQL }}</textarea>
+                        <textarea class="form-control" name="search_objects_sql">{{ OBJECT_SQL }}</textarea>
+                        <button class="btn btn-sm btn-primary" style="margin-top: 5px;">検索</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-body row">
+                {% include 'ai/table.html' %}
+            </div>
+
+            <div class="card-footer text-right">
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

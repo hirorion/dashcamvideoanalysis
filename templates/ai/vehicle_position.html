@@ -1,0 +1,130 @@
+{% extends 'user/index_base.html' %}
+{% load static from staticfiles %}
+{% load myutil %}
+
+{% block add_css %}
+    {# テーブルページの共通CSS #}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/card_ai_list.css' %}">
+    <style>
+            @media (min-width: 1500px) {
+                .container {
+                    max-width: 1500px;
+                }
+            }
+    </style>
+}
+{% endblock %}
+
+{% block js_script %}
+    {# テーブルページの共通JS #}
+    {% include 'layouts/table_page.js.html' %}
+
+    <script type="text/javascript" charset="UTF-8">
+        <!--//
+        var data;
+        var end_fno;
+        function get_data() {
+            var movie_id = $('#movie_id').val();
+            var start_fno = $('#start_fno').val();
+            end_fno = $('#end_fno').val();
+            $.getJSON('{% url 'ai_movie_frame_get_data_url' %}' + movie_id + "/" + start_fno + "/" + end_fno + "/", function(json) {
+                if (json.result !== "OK") {
+                    alert("Job Error. Please retry.");
+                    return false;
+                }
+                // 終わりをセット
+                end_fno = json.end_fno
+                // set json data
+                data = json.data;
+                // 描画開始
+                start_draw();
+            });
+        }
+
+        function start_draw() {
+            var anime_id;
+            var x = 500, y = 300;
+            var speed = 5.0; //速さ
+            var angle = 30; //角度
+            var radians = 0; //ラジアン
+            var vx = 0;
+            var vy = 0;
+
+            var canvas = document.getElementById('canvas');
+            var ctx = canvas.getContext('2d');
+
+            var count = 0;
+            function loop() {
+                speed = data[count][0];
+                angle = data[count][1];
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height); //キャンバス上の図形をクリアにする
+
+                radians = angle * Math.PI / 180; //度をラジアンに変換
+                vx = Math.cos(radians) * speed;
+                vy = Math.sin(radians) * speed;
+
+                x += vx;
+                y += vy;
+
+                ctx.beginPath();
+                ctx.fillStyle = 'green';
+                ctx.arc(x, y, 10, 0, Math.PI * 2.0, true);
+                ctx.fill();
+
+                count++;
+                if (count >= end_fno) {
+                    cancelAnimationFrame(anime_id);
+                    alert("end");
+                    return;
+                }
+                anime_id = requestAnimationFrame(loop);
+            }
+
+            loop();
+        }
+        //-->
+    </script>
+
+{% endblock %}
+
+{% block category_title %}
+{% endblock %}
+
+{% block content %}
+    <div class="container" style="height: 100%;">
+        <div class="card">
+            <div class="card-header" style="padding-bottom: 5px;">
+                <form class="form-row form-inline">
+                    <label>動画の選択
+                        <select name="movie_id" class="form-control form-control-sm" style="background-color: #eee">
+                            <option value="">動画をすべて選択</option>
+                            {% for mv in movie_list %}
+                                <option value="{{ mv.id }}">{{ mv.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>スタートフレーム番号（指定なしは最初から）
+                        <input type="text" class="form-control form-control-sm" id="start_fno" name="start_fno">
+                    </label>
+                    <label>エンドフレーム番号（指定なしは最後まで）
+                        <input type="text" class="form-control form-control-sm" id="end_fno" name="end_fno">
+                    </label>
+                    <button class="btn btn-sm btn-primary" onclick="get_data(); return false;">スタート</button>
+                </form>
+            </div>
+
+            <div class="card-body row" style="width:100%">
+                <div style="width: 100%">
+                    <canvas id="canvas" width="1000" height="800">
+                        ブラウザが対応しておりません。
+                    </canvas>
+                </div>
+            </div>
+
+            <div class="card-footer">
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

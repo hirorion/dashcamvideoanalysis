@@ -1,0 +1,20 @@
+{% extends "registration/registration_base.html" %}
+{% load bootstrap4 %}
+
+{% block title %}ユーザー更新{% endblock %}
+
+{% block content %}
+    <div class="col-md-8" style="margin-bottom: 10px;">
+        <h4>ユーザー更新
+        </h4>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-sm-10">
+        <form action="" method="post">{% csrf_token %}
+            {% bootstrap_form form %}
+            <input type="submit" class="btn btn-primary" value="更新" />
+            <a href="/" class="btn btn-default">キャンセル</a>
+        </form>
+     </div>
+    <div class="clearfix"></div>
+{% endblock %}

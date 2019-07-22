@@ -1,0 +1,9 @@
+{% load i18n %}
+{% url 'registration_activate' activation_key as activation_key_url %}
+
+IRRICドラレコAI認識のユーザー登録のご案内です。
+もし、見覚えのない場合は、このメールを無視してください。
+この記録から削除されます。
+
+このアカウントを有効にするには、{{ expiration_days }}日以内に次のリンクをクリックしてください：
+http{% if request.is_secure %}s{% endif %}://{{site.domain}}{{ activation_key_url }}

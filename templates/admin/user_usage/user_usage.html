@@ -1,0 +1,134 @@
+{% extends 'admin/index_base.html' %}
+{% load static from staticfiles %}
+{% load bootstrap4 %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block add_css %}
+    {# テーブルページの共通CSS #}
+    {% include 'layouts/table_page.css.html' %}
+{% endblock %}
+
+{% block js_script %}
+    {# テーブルページの共通JS #}
+    {% include 'layouts/table_page.js.html' %}
+
+    <script type="text/javascript" charset="UTF-8">
+        <!--//
+
+        $(document).ready(function () {
+
+            //-------------------------------------
+            // イベントセット
+            //-------------------------------------
+
+            /**
+             * 検索フォームのイベントセット
+             */
+            // TODO no implements
+            // page related
+            $('#search_form').submit(function (e) {
+                // 左ツリーの検索条件をクリアする（これしないとこちらが優先になる）
+                //$('#search_user_group').val('');
+                // テーブル再読込
+                table.ajax.reload();
+                return false;
+            });
+
+        });
+        //-->
+    </script>
+{% endblock %}
+
+{% block category_title %}
+{% endblock %}
+
+{% block content %}
+    {# パンくず作成 #}
+    {% block breadcrumbs %}
+        {% clear_breadcrumbs %}
+        {{ block.super }}
+        {% breadcrumb "IRRICドラレコAI認識" "" %}
+        {% breadcrumb "管理機能" "" %}
+        {% breadcrumb "利用状況" "" %}
+    {% endblock %}
+
+    <div class="container">
+        <div class="row">
+            {# 各ページでセットされたパンくずをレンダリングする #}
+            {% render_breadcrumbs %}
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <form class="form-inline" name="search_form" id="search_form" accept-charset="UTF-8">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="form-group mb-2">
+                            <label>契約期間</label>
+                            <input type="date" name="contract_start_date" class="form-control" placeholder="開始日" id="id_contract_start_date">
+                            &nbsp;&nbsp;&nbsp;〜
+                        </div>
+                        <div class="form-group mb-2">
+                            <input type="date" name="contract_end_date" class="form-control" placeholder="終了日" id="id_contract_end_date">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="id_company_name">契約会社名</label>
+                            <input type="text" name="company_name" class="form-control use_icon" placeholder="&#xf002; 契約会社名" id="id_company_name">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group mb-2">
+                            <label>サービスパターン</label>
+                            <label for="id_service_pattern_a">A</label>
+                            <input type="checkbox" name="service_pattern_a" class="form-control check" id="id_service_pattern_a">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="id_service_pattern_b">B</label>
+                            <input type="checkbox" name="service_pattern_b" class="form-control check"
+                                   id="id_service_pattern_b">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="id_service_pattern_c">C</label>
+                            <input type="checkbox" name="service_pattern_c" class="form-control check"
+                                   id="id_service_pattern_c">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label>事業種別</label>
+                            <label for="id_service_type_truck">トラック</label>
+                            <input type="checkbox" name="service_type_truck" class="form-control check"
+                                   id="id_service_type_truck">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="id_service_type_bus">バス</label>
+                            <input type="checkbox" name="service_type_bus" class="form-control check"
+                                   id="id_service_type_bus">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="id_service_type_taxi">タクシー</label>
+                            <input type="checkbox" name="service_type_taxi" class="form-control check"
+                                   id="id_service_type_taxi">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="id_service_type_other">その他</label>
+                            <input type="checkbox" name="service_type_other" class="form-control check"
+                                   id="id_service_type_other">
+                        </div>
+
+                        <button type="submit" class="btn btn-sm btn-dark mb-2">検索</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-body row">
+                <div class="col">
+                    <img src="{% static 'img/temp/dashboard.png' %}" width="100%">
+                </div>
+            </div>
+
+            <div class="card-footer row">
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

@@ -1,0 +1,479 @@
+{% extends 'user/index_base.html' %}
+{% load static from staticfiles %}
+{% load bootstrap4 %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block add_css %}
+    {# テーブルページの共通CSS #}
+    {% include 'layouts/table_page.css.html' %}
+    {# ファイルアップロード #}
+    <link rel="stylesheet" href="{% static 'css/jquery.fileupload.css' %}">
+    <style>
+    .video-preview {
+        display: inline-block;
+        position: relative;
+        background: #ddd;
+        overflow: hidden;
+        /* This is temporary width and height, these'll be overriden when the source img is loaded. */
+        /* If you already know size of a preview frame you can hardcode it here. */
+        /*width: 160px;*/
+        height: 100px;
+        border-radius: 3px;
+        box-shadow: 0 0 6px #bbb;
+    }
+    .list-group-item {
+        padding-left: 8px;
+        padding-right: 0;
+    }
+    </style>
+{% endblock %}
+
+{% block js_script %}
+    {# テーブルページの共通JS #}
+    {% include 'layouts/table_page.js.html' %}
+    <script src="{% static 'js/vendor/jquery.ui.widget.js' %}"></script>
+    <script src="{% static 'js/jquery.fileupload.js' %}"></script>
+
+    <script type="text/javascript" charset="UTF-8">
+        <!--//
+        var table;
+
+        $(document).ready(function () {
+
+            $.fn.videoPreview = function(options) {
+                return this.each(function() {
+                    var elm = $(this);
+                    var frames = parseFloat(elm.data('frames'));
+
+                    var img = $('<img/>', { 'src': elm.data('source') }).hide().css({
+                        'position': 'absolute',
+                        'cursor': 'pointer'
+                    }).appendTo(elm);
+
+                    var slider = $('<div/>').hide().css({
+                        'width': '2px',
+                        'height': '100%',
+                        'background': '#ddd',
+                        'position': 'absolute',
+                        'z-index': '1',
+                        'top': '0',
+                        'opacity': 0.6,
+                        'cursor': 'pointer'
+                    }).appendTo(elm);
+
+                    var width;
+
+                    function defaultPos() {
+                        img.css('left', -width * frames / 3);
+                    }
+
+                    img.on('load', function() {
+                        $(this).show();
+                        width = this.width / frames;
+                        elm.css('width', width);
+                        defaultPos();
+                    });
+                    elm.mousemove(function(e) {
+                        var left = e.clientX - elm.offset().left;
+                        slider.show().css('left', left - 1); // -1 because it's 2px width
+                        img.css('left', -Math.floor((left / width) * frames) * width);
+                    }).mouseout(function(e) {
+                        slider.hide();
+                        defaultPos();
+                    });
+
+                });
+            };
+
+            //-------------------------------------
+            // file upload
+            //-------------------------------------
+            $('#fileupload').fileupload({
+                url: "{% url 'user_movie_upload' %}",
+                dataType: 'json',
+                submit: function (e, data) {
+                    show_dialog();
+                    // ボタン押下後の処理
+                    $('#fileupload_message').text(""); // clear
+                },
+                done: function (e, data) {
+                    hide_dialog();
+                    $('#fileupload_message').text("アップロードに成功しました。");
+                },
+                fail: function (e, data) {
+                    hide_dialog();
+                    $('#progress .progress-bar').css(
+                        'width',
+                        0 + '%'
+                    );
+                    $('#fileupload_message').html("<span style='color:red'>アップロードに失敗しました。</span>");
+                },
+                progress: function (e, data) {
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    $('#progress .progress-bar').css(
+                        'width',
+                        progress + '%'
+                    );
+                }
+            }).prop('disabled', !$.support.fileInput)
+                .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+            //-------------------------------------
+            // load list
+            //-------------------------------------
+            table = $('#list-table').DataTable({
+                scrollX: false,
+                stateSave: true,
+                serverSide: true,
+                "dom": "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-4'i><'col-sm-12 col-md-6'p>>",
+                rowId: 'dataId',
+                // page related
+                "order": [[1, "desc"]],
+                // page related
+                "columns": [
+                    {"data": "checkbox_contents", orderable: false},
+                    {"data": "id_name"},
+                    {"data": "select"},
+                    {"data": "movie"},
+                    {"data": "movie_info"},
+                    {"data": "status"},
+                    {"data": "is_save"},
+                ],
+                ajax: {
+                    // page related
+                    "url": "{% url "user_movie_list" %}",
+                    "type": "POST",
+                    "data": function (d) {
+                        return table_condition(d);
+                    }
+                }
+            });
+
+            //-------------------------------------
+            // イベントセット
+            //-------------------------------------
+            // upload event
+            $('#fileupload').bind('fileuploadsubmit', function (e, data) {
+                data.formData = $("#movie_upload_form").serializeArray();
+            });
+            // 視聴ボタンイベント
+            $('#list-table tbody').on('click', '.mybtn-watching', function () {
+                var mid = $(this).data('movie-id');
+                location.href = '{% url 'user_movie_watching_url' %}' + mid + "/";
+                return false;
+            });
+            // 削除ボタンイベント
+            $('#list-table tbody').on('click', '.mybtn-delete', function () {
+                var id = table.row( $(this).parents('tr') ).id();
+                remove_submit(id.replace('row_', ''));
+                return false;
+            });
+            // 分析ボタンイベント
+            $('#list-table tbody').on('click', '.mybtn-analysis', function () {
+                var id = table.row( $(this).parents('tr') ).id();
+                analysis_submit(id.replace('row_', ''));
+                return false;
+            });
+
+            // アップロードチェック
+            $('#fileupload').on('click', function () {
+                var driver_id = $('#movie_driver_id').val();
+                if (driver_id == "") {
+                    alert("ドライバーを選択してください。");
+                    return false;
+                }
+            });
+
+            /**
+             * 検索フォームのイベントセット
+             */
+            // page related
+            $('#search_form').submit(function (e) {
+                // 左ツリーの検索条件をクリアする（これしないとこちらが優先になる）
+                $('#search_status').val('');
+                // テーブル再読込
+                table.ajax.reload();
+                return false;
+            });
+
+            /**
+             * 左ツリーからの検索ボタンのイベントセット
+             * data-valの値をチェックして検索実行
+             */
+            // page related
+            $('.treeview').on('click', '.list-group-item', function () {
+                var no = $(this).data('val');
+                $('#search_status').val(no);
+                table.ajax.reload();
+                // 検索フォームリセット
+                document.search_form.reset();
+                return false;
+            });
+
+        });
+
+        //-------------------------------------
+        // テーブルリストの取得条件を切り替える
+        //-------------------------------------
+        // page related
+        function table_condition(d) {
+            if ($('#search_status').val() !== '') {
+                return $('#search_status_form').serializeFormJSON(d);
+            } else {
+                return $('#search_form').serializeFormJSON(d);
+            }
+        }
+
+        /**
+         * 解析（テンポラリ)
+         */
+        function analysis_submit(id) {
+            if (!confirm('この動画の解析をしてもいいですか？')) {
+                return false;
+            }
+
+            var data = "csrfmiddlewaretoken=" + $("input[name='csrfmiddlewaretoken']").val();
+            $.ajax({
+                url: '{% url 'user_movie_submit_job_url' %}' + id + "/",
+                type: 'POST',
+                cache: false,
+                data: data,
+                dataType: "json",
+                success: function (json) {
+                    if (json.result === "OK") {
+                        table.ajax.reload();
+                        //timerStart(id);
+                        notif({
+                            msg: "分析を開始しました。しばらくお待ちください。",
+                            type: "info",
+                            position: "center",
+                            autohide: false
+                        });
+                    } else if (json.result === "PROCESSING") {
+                        notif({
+                            msg: "分析中です。しばらくお待ちください。",
+                            type: "warning",
+                            position: "center",
+                            autohide: false
+                        });
+                    } else {
+                        notif({
+                            msg: "分析に失敗しました。",
+                            type: "error",
+                            position: "center",
+                        });
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("Failed to read content.");
+                }
+            });
+            return false;
+        }
+
+        /**
+         * 削除
+         */
+        function remove_submit(id) {
+            if (!confirm('この動画を削除してもいいですか？')) {
+                return false;
+            }
+
+            var data = "csrfmiddlewaretoken=" + $("input[name='csrfmiddlewaretoken']").val();
+            $.ajax({
+                url: '{% url 'user_movie_delete_url' %}' + id + "/",
+                type: 'POST',
+                cache: false,
+                data: data,
+                dataType: "json",
+                success: function (json) {
+                    // リスト更新//
+                    table.ajax.reload();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("Failed to read content.");
+                }
+            });
+            return false;
+        }
+
+        //-->
+    </script>
+{% endblock %}
+
+{% block category_title %}
+{% endblock %}
+
+{% block content %}
+    {# パンくず作成 #}
+    {% block breadcrumbs %}
+        {% clear_breadcrumbs %}
+        {{ block.super }}
+        {% breadcrumb "契約会社ポータル" "" %}
+        {% breadcrumb "管理機能" "" %}
+        {% breadcrumb "動画管理" "" %}
+    {% endblock %}
+
+    <div class="container">
+        <div class="row">
+            {# 各ページでセットされたパンくずをレンダリングする #}
+            {% render_breadcrumbs %}
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <form class="form-inline" name="search_form" id="search_form" accept-charset="UTF-8">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="form-group mb-2">
+                            <label for="id_driver_id">ドライバーID</label>
+                            <select name="search_driver_id" style="font-size: 12px; padding-top: 3px; padding-bottom: 3px;height: 26px;">
+                                <option value="">---</option>
+                                {% for d in drivers %}
+                                <option value="{{ d.id }}">{{ d.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="id_driver_name">氏名</label>
+                            <input type="text" name="search_driver_name" class="form-control use_icon" placeholder="&#xf002; ドライバー氏名" id="id_driver_name">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label>運転日</label>
+                            <input type="date" name="search_contract_start_date" class="form-control" placeholder="開始日" id="id_contract_start_date">
+                            &nbsp;&nbsp;&nbsp;〜
+                        </div>
+                        <div class="form-group mb-2">
+                            <input type="date" name="search_contract_end_date" class="form-control" placeholder="終了日" id="id_contract_end_date">
+                        </div>
+
+
+                    </div>
+                    <div class="row">
+                        <div class="form-group mb-2">
+                            <label>違反項目</label>
+                            <select name="search_violation_type" class="custom-select custom-select-sm" title="" id="id_violation_type">
+                                <option value="1">法令遵守</option>
+                                <option value="2">運転操作</option>
+                                <option value="3">その他</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <select name="search_violation_item" class="custom-select custom-select-sm" title="" id="id_violation_item">
+                                <option value="1">赤信号無視</option>
+                                <option value="2">停止できるタイミングの黄信号通過</option>
+                                <option value="3">速度超過</option>
+                                <option value="4">駐車禁止場所での駐車</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-sm btn-dark mb-2">検索</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-body row">
+                <div class="col-2-auto border">
+                    {% include 'user/movie/tree.html' %}
+                </div>
+
+                <div class="col">
+                    {% include 'user/movie/table.html' %}
+                </div>
+            </div>
+
+            <div class="card-footer row align-items-center">
+                <div class="col-2">
+                    <!-- The fileinput-button span is used to style the file input field as button -->
+                    <span class="btn btn-sm btn-dark fileinput-button">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>アップロード</span>
+                            <!-- The file input field used as target for the file upload widget -->
+                            <input id="fileupload" type="file" name="datafile">
+                        </span>
+                    <br>
+                    <br>
+                    <!-- The global progress bar -->
+                    <div id="progress" class="progress">
+                        <div class="progress-bar progress-bar-success"></div>
+                    </div>
+                    <!-- The container for the uploaded files -->
+                    <div id="files" class="files"></div>
+                    <span id="fileupload_message"></span>
+                </div>
+                <div class="col-auto border">
+                    <form id="movie_upload_form">
+                        {% csrf_token %}
+                        <div class="row" style="margin-bottom: 0;">
+                            <div class="col-auto input-group input-group-sm mb-2" style="width: auto; padding-top: 10px;">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="movie_driver_id" style="font-size: 12px;padding: 0 5px;">ドライバーID</label>
+                                </div>
+                                <select class="custom-select" name="movie_driver_id" id="movie_driver_id" style="font-size: 12px; padding-top: 3px; padding-bottom: 3px;height: 26px;">
+                                    <option value=""> --- </option>
+                                    {% for d in drivers %}
+                                    <option value="{{ d.id }}">{{ d.username }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-auto" style="padding-top: 10px;">
+                                <label for="id_movie_vehicle_no">車両番号</label>
+                                <input type="text" style="width: 80px;" class="" id="id_movie_vehicle_no" value="{{ form.vehicle_no.data|default:'' }}">
+                                <label for="id_movie_vehicle_type">車種</label>
+                                <input type="text" style="width: 70px;" class="" id="id_movie_vehicle_type" value="{{ form.vehicle_type.data|default:'' }}">
+                            </div>
+                        </div>
+                        <div class="border" style="padding: 5px;">
+                            <label for="id_movie_driver_record_maker">ドラレコ情報:&nbsp;&nbsp;&nbsp;&nbsp;メーカー</label>
+                            <input type="text" style="width: 70px;" class="" id="id_movie_drive_record_maker" value="{{ form.drive_record_maker.data|default:'' }}">
+                            <label for="id_movie_drive_record_typeno">型番</label>
+                            <input type="text" style="width: 70px;" class="" id="id_movie_drive_record_typeno" value="{{ form.drive_record_typeno.data|default:'' }}">
+                            <label for="id_movie_drive_record_high">取付位置(地上高)</label>
+                            <input type="text" style="width: 70px;" class="" id="id_movie_drive_record_high" value="{{ form.drive_record_high.data|default:'' }}">
+                        </div>
+                        <div style="margin: 5px;">
+                            <input type="checkbox">
+                            <label for="id_movie_internal_use" style="margin-right: 15px;">システム精度向上の為、社内使用に同意します</label>
+                            <input type="checkbox">
+                            <label for="id_movie_external_use">社外公開に同意します</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-sm btn-dark" onclick="return false;">保存</button>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-sm btn-dark" onclick="return false;">一覧詳細情報出力</button>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-sm btn-dark" onclick="return false;">分析結果詳細</button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- modal -->
+    <div class="modal" id="seeking_dialog" data-backdrop="static" data-keyboard="false" role="dialog">
+        <div class="modal-dialog modal-ssm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img src="{% static 'img/loading2.gif' %}">&nbsp;&nbsp;アップロード中...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal -->
+    <div class="modal" id="analysis_dialog" data-backdrop="static" data-keyboard="false" role="dialog">
+        <div class="modal-dialog modal-ssm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img src="{% static 'img/loading2.gif' %}">&nbsp;&nbsp;分析中...
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

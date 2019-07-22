@@ -1,0 +1,156 @@
+{% extends 'user/index_base.html' %}
+{% load static from staticfiles %}
+{% load bootstrap4 %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block add_css %}
+    {# テーブルページの共通CSS #}
+    {% include 'layouts/table_page.css.html' %}
+{% endblock %}
+
+{% block js_script %}
+    {# テーブルページの共通JS #}
+    {% include 'layouts/table_page.js.html' %}
+
+    <script type="text/javascript" charset="UTF-8">
+        <!--//
+        var table;
+
+        $(document).ready(function () {
+            //-------------------------------------
+            // load list
+            //-------------------------------------
+
+            //-------------------------------------
+            // イベントセット
+            //-------------------------------------
+
+        });
+
+        //-->
+    </script>
+{% endblock %}
+
+{% block category_title %}
+{% endblock %}
+
+{% block content %}
+    {# パンくず作成 #}
+    {% block breadcrumbs %}
+        {% clear_breadcrumbs %}
+        {{ block.super }}
+        {% breadcrumb "契約会社ポータル" "" %}
+        {% breadcrumb "管理機能" "" %}
+        {% breadcrumb "分析結果詳細" "" %}
+    {% endblock %}
+
+    <div class="container">
+        <div class="row">
+            {# 各ページでセットされたパンくずをレンダリングする #}
+            {% render_breadcrumbs %}
+        </div>
+
+        <div class="card">
+            <!--div class="card-header">
+            </div-->
+
+            <div class="card-body row">
+                <div class="col-2-auto border">
+                    {% include 'user/analysis_results/table.html' %}
+                </div>
+
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-2">性別</div><div class="col-4">男性</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2">生年月日</div><div class="col-4">年齢 XX歳</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2">採用年月日</div><div class="col-4">勤務歴 XX年</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2">車種</div><div class="col-4">トヨタ</div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <ul class="nav nav-tabs" role="tablist">
+                                  <li class="nav-item">
+                                    <a style="width: 400px;" class="text-center nav-link active" id="item1-tab" data-toggle="tab" href="#item1" role="tab" aria-controls="item1" aria-selected="true">基本機能</a>
+                                  </li>
+                                  <li class="nav-item">
+                                    <a style="width: 400px;" class="text-center nav-link" id="item2-tab" data-toggle="tab" href="#item2" role="tab" aria-controls="item2" aria-selected="false">詳細機能</a>
+                                  </li>
+                                </ul>
+                            </div>
+                            <div class="row">
+                                <div class="tab-content" style="width: 100%; padding: 20px;">
+                                    <div class="tab-pane fade show active" id="item1" role="tabpanel" aria-labelledby="item1-tab">
+                                        <div class="row">
+                                           <div class="col-2 text-right">点数</div>
+                                           <div class="col-4"></div>
+                                        </div>
+                                        <div class="row">
+                                           <div class="col-2 text-right">社内順位</div>
+                                           <div class="col-4"></div>
+                                        </div>
+                                        <div class="row">
+                                           <div class="col-2 text-right">走行距離</div>
+                                           <div class="col-4"></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-2 text-right">違反回数</div>
+                                            <div class="col-2">法令遵守</div>
+                                            <div class="col-2">xx回</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-2"></div>
+                                            <div class="col-2">運転操作</div>
+                                            <div class="col-2">xx回</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-2"></div>
+                                            <div class="col-2">その他</div>
+                                            <div class="col-2">xx回</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-1">
+                                            </div>
+                                            <div class="col">
+                                                <span style="font-size: 120%;">映像から見られる運転の傾向</span>
+                                                <br>
+                                                <br>
+                                                [全体的傾向]<br>
+                                                <br>
+                                                全般に車間距離が短く、運転操作が荒い印象です。車線間を縫うように荒い操作で走行したり、前の車がブレーキを掛けた際に強いブレーキ操作となったりする場面が複数見受けられました。車間距離を十分に取り、ゆっくりと丁寧なハンドル、ブレーキ・アクセル操作を行うように意識してください。
+                                                <br>
+                                                <br>
+                                                <br>
+                                                <br>
+                                                <br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="item2" role="tabpanel" aria-labelledby="item2-tab">
+                                        This is a text of 詳細機能
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer row">
+                <div class="col-auto"><button type="button" class="btn btn-sm btn-dark" onclick="return false;">分析レポートアップロード</button></div>
+                <div class="col text-right"><button type="button" class="btn btn-sm btn-dark" onclick="return false;">分析レポートダウンロード</button></div>
+
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% load render_bundle from webpack_loader %}
+<!-- vue_grid.htmlは表示項目に合わせてちょっと改造。 -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to Vue</title>
+    <!-- CSS読み込み -->
+    <link rel="stylesheet" type="text/css" href="/static/vue_grid.css">
+</head>
+<body>
+
+<div id="hello-world"></div>
+
+<div id="demo"></div>
+
+{# 上記の代わりにwebpackを使う。固めたJSをロード(場所は最後でもここでなくてもいい）#}
+{% render_bundle 'main' %}
+
+</body>
+
+</html>

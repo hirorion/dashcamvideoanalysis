@@ -1,0 +1,32 @@
+{% extends "registration/registration_base.html" %}
+{% load bootstrap4 %}
+
+{% block title %}ユーザー登録（招待）{% endblock %}
+
+{% block content %}
+    <div class="col-md-8" style="margin-bottom: 10px;">
+        <h4>ユーザー登録（招待）
+        </h4>
+    </div>
+    <div class="clearfix"></div>
+    <form method='post' action=''>
+       {% csrf_token %}
+        <div class="col-sm-5">
+            <div id="registration">
+                    {% bootstrap_form form %}
+
+                    <label class="control-label">権限設定</label>
+                    <select name="group" class="form-control">
+                        <option value="all">一般：&nbsp;入居処理/解約処理(経理チェックボタン除く)</option>
+                        <option value="accounting">経理：&nbsp;入居処理/入居経理処理/解約処理(経理チェックボタン含む)</option>
+                    </select>
+                    <div class="help-block">権限を選択してください。</div>
+                    <br>
+                    <br>
+                    <input type="hidden" name="invite_activate_key" value="{{ invite_activate_key|default:'' }}"/>
+                    <input type="submit" class="btn btn-primary" value="アクティベーションメール送信"/>&nbsp;&nbsp;
+                    <input type="button" class="btn btn-primary" value="キャンセル" onClick="location.href='{% url 'login' %}'">
+            </div>
+        </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,120 @@
+{% load static from staticfiles %}
+
+{% block brand_icon %}
+    <style>
+        .navbar-brand img {
+            /*background: url("
+        {% static "img/brand_icon.png" %} ") no-repeat left center;
+            background-size: contain;*/
+            margin-top: 0;
+            margin-left: 0;
+            width: 40px;
+        }
+    </style>
+{% endblock %}
+
+<style>
+    .navbar {
+        min-height: 30px;
+    }
+
+    .navbar-nav > li > a,
+    .navbar-brand {
+        text-decoration: none;
+        margin: 0;
+        padding: 0;
+        /*font-size: 10px;*/
+    }
+
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        height: 30px;
+        padding: 0px 5px;
+        margin-top: 3px;
+    }
+
+    .navbar-brand > img {
+        margin-right: 5px;
+        margin-bottom: 7px;
+        width: 30px;
+    }
+
+    /* サブナビのタブの設定 */
+    #navbar a {
+        position: relative;
+        display: block;
+        line-height: 2.0em;
+        padding: 0 30px;
+        color: #1c4c8d;
+    }
+
+    #navbar a {
+        text-decoration: none;
+        /*font-size: 11px;*/
+        color: #333;
+    }
+
+    #navbar #selected span,
+    #navbar li:hover span {
+        display: block;
+    }
+
+    #navbar .nav1.active a {
+        background: #eeeeee;
+    }
+
+    #navbar .nav2.active a {
+        background: #eeeeee;
+    }
+
+    #navbar .nav3.active a {
+        background: #eeeeee;
+    }
+
+</style>
+
+<div class="header" style="margin-bottom: 5px;">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="/"><img src="{% static "img/brand_icon.png" %}"></a>
+        <span class="navbar-brand">&nbsp;&nbsp;IRRICドラレコAI認識</span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-sample">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <!--li class="nav-item active">
+                    <a class="nav-link" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li-->
+            </ul>
+
+            <ul class="navbar-nav">
+                {% block menu_items %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Dropdown
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Login</a>
+                    </li>
+                {% endblock %}
+            </ul>
+        </div>
+    </nav>
+</div>

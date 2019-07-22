@@ -1,0 +1,17 @@
+{% extends "registration/registration_base.html" %}
+{% load i18n %}
+
+{% block title %}{% if account %}{% trans 'Activation complete' %}{% else %}{% trans 'Activation problem' %}{% endif %}{% endblock %}
+{% block content %}
+<div id="registration">
+{% if account %}
+{% url 'login' as auth_login_url %}
+アクティベーションが完了しました。</br>
+ここから<a href='{{ auth_login_url }}'>ログイン</a>してください。
+{% else %}
+Oops &ndash; アクティベーションのキーが間違っています。URLを確認してください。
+<br/>
+{% endif %}
+</div>
+{% endblock %}
+

@@ -1,0 +1,8 @@
+    <li class="nav-item">
+        <a class="nav-link" href="#">お問い合わせ<i class="inquiry_icon far fa-envelope"></i></a>
+    </li>
+    <li class="nav-item">
+        {% if request.user.is_authenticated %}
+            <a class="nav-link" href="#" onClick="location.href='{% url 'logout' %}'">ログアウト</a>
+        {% endif %}
+    </li>

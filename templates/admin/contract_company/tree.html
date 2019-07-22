@@ -1,0 +1,22 @@
+<form class="form-inline" id="search_type_form" accept-charset="UTF-8">
+    {% csrf_token %}
+    <input type="hidden" id="search_type" name="search_type" value="">
+</form>
+
+<div class="treeview list-group">
+    <button class="list-group-item list-group-item-action" data-val=0>
+        <span class="fas fa-folder"></span><span class="fas fa-user"></span>（全ての契約会社）
+    </button>
+    <button href="#" class="list-group-item list-group-item-action" data-val=1>
+        <span class="indent"></span>
+        <span class="fas fa-folder"></span><span class="fas fa-user"></span>&nbsp;契約中
+    </button>
+    <button href="#" class="list-group-item list-group-item-action" data-val=2>
+        <span class="indent"></span>
+        <span class="fas fa-folder"></span><span class="fas fa-user"></span>&nbsp;契約終了
+    </button>
+    <button href="#" class="list-group-item list-group-item-action" data-val=3>
+        <span class="indent"></span>
+        <span class="fas fa-folder"></span><span class="fas fa-user"></span>&nbsp;利用停止中
+    </button>
+</div>

@@ -1,0 +1,16 @@
+{% extends "registration/registration_base.html" %}
+{% load i18n %}
+
+{% block title %}アクティベーションメール{% endblock %}
+{% block content %}
+    <div class="row">
+        <div id="registration">
+            <div class="col-md-12">
+                <h4>
+                    アクティベーションメールが送信されました。アカウントを有効にするには、メールのリンクをクリックしてください。
+                </h4>
+                <input type='button' class="btn btn-primary" value="ログインページへ戻る" onClick="location.href='{% url 'login' %}'"/>
+            </div>
+        </div>
+    </div>
+{% endblock %}

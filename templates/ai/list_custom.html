@@ -1,0 +1,99 @@
+{% extends 'user/index_base.html' %}
+{% load static from staticfiles %}
+{% load myutil %}
+
+{% block add_css %}
+    {# テーブルページの共通CSS #}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/card_ai_list.css' %}">
+    <style>
+            @media (min-width: 1500px) {
+                .container {
+                    max-width: 1500px;
+                }
+            }
+    </style>
+}
+{% endblock %}
+
+{% block js_script %}
+    {# テーブルページの共通JS #}
+    {% include 'layouts/table_page.js.html' %}
+{% endblock %}
+
+{% block category_title %}
+{% endblock %}
+
+{% block content %}
+    <div class="container" style="height: 100%;">
+        <div class="card">
+            <div class="card-header" style="padding-bottom: 5px;">
+                {% if error %}
+                <div class="alert alert-danger" role="alert">検索が失敗しました。</div>
+                {% endif %}
+                <form id="search_form" accept-charset="UTF-8" method="POST" action="{% url 'ai_movie_search_custom' %}">
+                    {% csrf_token %}
+                    <div class="form-group-sm">
+                        検索オブジェクト<br>
+                        <select name="movie" class="form-control form-control-sm" style="background-color: #eee">
+                            <option value="">動画をすべて選択</option>
+                            {% for mv in movie_list %}
+                                <option value="{{ mv.id }}" {% if mv.id == request.session.ai_search_movie|int_val %}selected{% endif %}>{{ mv.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-primary" style="margin-top: 5px;">検索</button>
+                </form>
+            </div>
+
+            <div class="card-body row">
+                <table class="table table-striped table-condensed table-bordered table-sm">
+                    <tr>
+                        <th>動画</th>
+                        <th>フレーム</th>
+                        <th>スピード</th>
+                        <th>カメラポジション</th>
+                        <th>オブジェクト名(スコア)</th>
+                        <th>イメージ</th>
+                        <!--th>sql</th-->
+                    </tr>
+                    {% for mv in data_list.movie %}
+                        {% for fr in mv.fno %}
+                        <tr>
+                            <td>{{ mv.id }}</td>
+                            <td>{{ fr.id }}</td>
+                            <td>{{ fr.speed }}</td>
+                            <td>{%  for cp in fr.camera_pose %}{{ cp }}<br>{% endfor %}</td>
+                            <td style="text-nowrap">
+                                {% for ob in fr.objs %}
+                                    <strong>{{ ob.name }}</strong> ({{ ob.score }})<br>
+                                    center: {{ ob.center }}<br>
+                                    x1: {{ ob.x1 }}<br>
+                                    y1: {{ ob.y1 }}<br>
+                                    x2: {{ ob.x2 }}<br>
+                                    y2: {{ ob.y2 }}<br>
+                                    x1p: {{ ob.x1p }}<br>
+                                    y1p: {{ ob.y1p }}<br>
+                                    x2p: {{ ob.x2p }}<br>
+                                    y2p: {{ ob.y2p }}<br>
+                                    y2 - y1: {{ ob.y2y1 }}<br>
+                                    h degrees: {{ ob.h_degrees }}度<br>
+                                    長さ: {{ ob.length }}<br>
+                                    長さp: {{ ob.lengthp }}<br>
+                                    pose0:{{ ob.pose0 }}<br>pose1:{{ ob.pose1 }}<br>pose2:{{ ob.pose2 }}<br>pose3:{{ ob.pose3 }}<br>
+                                {% endfor %}
+                            </td>
+                            <td><img src="{% url 'ai_movie_get_image' mv.id fr.id %}" title="{{ fr.object_sql }}"></td>
+                            <!--td><textarea>{{ fr.object_sql }}</textarea></td-->
+                         </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </table>
+            </div>
+
+            <div class="card-footer">
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

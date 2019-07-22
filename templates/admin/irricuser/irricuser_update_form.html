@@ -1,0 +1,75 @@
+{% extends 'admin/index_base.html' %}
+{% load static from staticfiles %}
+{% load bootstrap4 %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block add_css %}
+    {# テーブルページの共通CSS #}
+    {% include 'layouts/form_page.css.html' %}
+    <style>
+        input[name='password_auto_flag'] {
+            margin-top: 10px;
+        }
+        input[name='password_reset_next_login_flag'] {
+            margin-top: 10px;
+        }
+        input[name='send_mail_flag'] {
+            margin-top: 10px;
+        }
+
+    </style>
+{% endblock %}
+
+{% block js_script %}
+{% endblock %}
+
+{% block category_title %}
+{% endblock %}
+
+{% block content %}
+    {# パンくず作成 #}
+    {% block breadcrumbs %}
+        {% clear_breadcrumbs %}
+        {{ block.super }}
+        {% breadcrumb "IRRICドラレコAI認識" "" %}
+        {% breadcrumb "管理機能" "" %}
+        {% breadcrumb "IRRICユーザー管理" "" %}
+        {% breadcrumb "ユーザー更新" "" %}
+    {% endblock %}
+
+    <div class="container">
+        <div class="row">
+            {# 各ページでセットされたパンくずをレンダリングする #}
+            {% render_breadcrumbs %}
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+            </div>
+
+            <div class="card-body">
+                <form method="post">
+                  {% csrf_token %}
+                    <div class="form-group row">
+                        <div class="col-3">
+                            ログインID
+                        </div>
+                        <div class="col-5">
+                            {{ user_id }}
+                        </div>
+                    </div>
+                    {% bootstrap_form form layout='horizontal' horizontal_label_class='col-3' horizontal_field_class='col-5'%}
+                    <div class="row">
+                        <div class="col-auto"><button type="submit" class="btn btn-sm btn-dark">更新</button></div>
+                        <div class="col-auto"><button type="button" class="btn btn-sm btn-dark" onclick="location.href='{% url 'admin_irricuser' %}'">キャンセル</button></div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-footer">
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

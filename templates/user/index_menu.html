@@ -1,0 +1,11 @@
+{% extends 'layouts/base_menu.html' %}
+
+{% block menu_items %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'user_dashboard' %}">ダッシュボード</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">プロフィール</a>
+    </li>
+    {% include "layouts/common_menu.html" %}
+{% endblock %}
