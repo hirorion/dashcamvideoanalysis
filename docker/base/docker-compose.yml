@@ -1,0 +1,13 @@
+version: '2'
+services:
+  base1:
+    build: ubuntu16_cuda_bazel
+    image: dashcam-base01:1.0
+
+  base2:
+    build: tensorflow
+    image: dashcam-base02:1.0
+
+  base3:
+    build: opencv
+    image: dashcam-base-dev:1.0

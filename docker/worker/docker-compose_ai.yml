@@ -1,0 +1,10 @@
+version: '2'
+services:
+  build_ai:
+    image: dashcam-ai-dev:1.0
+    build: 
+      context: dashcam-ai-dev
+      args:
+          # this user is ai process user
+          # map ubuntu2 ed id
+          - APP_USER_ID1=1002

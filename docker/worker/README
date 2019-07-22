@@ -1,0 +1,21 @@
+#
+# for create dashcam-worker-dev
+#
+# 1001 is mitsui id on ubuntu2
+cd dashcam-worker-dev
+env UID=1001 docker-compose build
+
+#
+# for run
+#
+# CUR_USER_NAMEにbuildで指定したUIDのユーザー名をセット
+# ssh_keysとsrcをマウント
+# ssh_keysには、id_rsa.gitlabのprivate keyを置く(400)
+# srcは、emptyのディレクトリ(ここにvenv, feature-irricが無ければ、展開される)
+docker run --rm -it -e CUR_USER_NAME=mitsui -v /home/mitsui/ssh_keys:/home/mitsui/ssh_keys -v /home/mitsui/src:/home/mitsui/src dashcam-worker-dev:1.0
+
+#
+# for create dashcam-ai-dev
+#
+cd dashcam-ai-dev
+env UID=1001 docker-compose build

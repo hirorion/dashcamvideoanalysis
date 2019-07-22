@@ -1,0 +1,12 @@
+version: '2'
+services:
+  build_worker:
+    image: dashcam-worker-dev:1.0
+    build:
+      context: ""
+      args:
+          # this user is rabbitmq process user
+          # ubunut2 mitsui id 1001
+          # macpro mitsui id 501
+          # UID=1001 docker-compose build
+          - APP_USER_ID1=$UID

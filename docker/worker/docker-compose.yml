@@ -1,0 +1,12 @@
+version: '2'
+services:
+  build_worker:
+    image: dashcam-worker-dev:1.0
+    build: 
+      context: dashcam-worker-dev
+      args:
+          # this user is rabbitmq process user
+          # map ubuntu2 mitsui id
+          #- APP_USER_ID1=1001
+          # map mac mitsui id
+          - APP_USER_ID1=501
