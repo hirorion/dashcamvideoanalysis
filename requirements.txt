@@ -1,6 +1,6 @@
 certifi==2019.6.16
 chardet==3.0.4
-Django==2.2
+Django==2.2.13
 django-bootstrap-breadcrumbs==0.9.1
 django-bootstrap4==0.0.8
 django-class-based-auth-views==0.4
